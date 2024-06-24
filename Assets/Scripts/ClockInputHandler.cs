@@ -8,19 +8,28 @@ public class ClockInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandle
     public Transform handPivot;
     private Vector3 clockCenter;
     private bool isDragging;
+    private float previousAngle;
+    private ClockUIManager clockUIManager;
 
     private void Start()
     {
         clockCenter = GetComponentInParent<Canvas>().GetComponent<RectTransform>().position;
+        clockUIManager = FindObjectOfType<ClockUIManager>();
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (!clockUIManager.IsEditMode())
+            return;
+        
         isDragging = true;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!clockUIManager.IsEditMode())
+            return;
+        
         if (isDragging)
         {
             Vector2 currentPosition = eventData.position;
@@ -63,5 +72,10 @@ public class ClockInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandle
         }
 
         ClockManager.Instance.SetCurrentTime(currentTime);
+        
+        // Update the InputField with the new time
+        clockUIManager.hourInputField.text = currentTime.ToString("HH");
+        clockUIManager.minuteInputField.text = currentTime.ToString("mm");
+        clockUIManager.secondInputField.text = currentTime.ToString("ss");
     }
 }

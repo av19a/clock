@@ -76,7 +76,6 @@ public class ClockUIManager : MonoBehaviour
         DateTime newTime = currentTime.AddHours(addHours);
         ClockManager.Instance.SetCurrentTime(newTime);
         hourInputField.text = ClockManager.Instance.GetCurrentTime().ToString("HH");
-        hourTimeText.text = ClockManager.Instance.GetCurrentTime().ToString("HH");
     }
     
     private void Subtract12Hours()

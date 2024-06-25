@@ -30,7 +30,7 @@ public class ClockInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandle
         if (!clockUIManager.IsEditMode())
             return;
         
-        if (isDragging)
+        if (isDragging && !handPivot.name.Contains("Second"))
         {
             Vector2 currentPosition = eventData.position;
             Vector2 direction = currentPosition - (Vector2)clockCenter;
@@ -79,10 +79,8 @@ public class ClockInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandle
         // Update the InputField with the new time
         clockUIManager.hourInputField.text = currentTime.ToString("HH");
         clockUIManager.minuteInputField.text = currentTime.ToString("mm");
-        clockUIManager.secondInputField.text = currentTime.ToString("ss");
         
         clockUIManager.hourTimeText.text = currentTime.ToString("HH");
         clockUIManager.minuteTimeText.text = currentTime.ToString("mm");
-        clockUIManager.secondTimeText.text = currentTime.ToString("ss");
     }
 }

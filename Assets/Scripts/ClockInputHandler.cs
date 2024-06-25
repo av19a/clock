@@ -54,28 +54,35 @@ public class ClockInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandle
             float hourAngle = -handPivot.localEulerAngles.z;
             int hours = Mathf.RoundToInt(hourAngle / 30f) % 12;
             if (hours < 0) hours += 12;
-            currentTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, hours, currentTime.Minute, currentTime.Second);
+            currentTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day,
+                hours, currentTime.Minute, currentTime.Second);
         }
         else if (handPivot.name.Contains("Minute"))
         {
             float minuteAngle = -handPivot.localEulerAngles.z;
             int minutes = Mathf.RoundToInt(minuteAngle / 6f) % 60;
             if (minutes < 0) minutes += 60;
-            currentTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, minutes, currentTime.Second);
+            currentTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day,
+                currentTime.Hour, minutes, currentTime.Second);
         }
         else if (handPivot.name.Contains("Second"))
         {
             float secondAngle = -handPivot.localEulerAngles.z;
             int seconds = Mathf.RoundToInt(secondAngle / 6f) % 60;
             if (seconds < 0) seconds += 60;
-            currentTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, currentTime.Minute, seconds);
+            currentTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day,
+                currentTime.Hour, currentTime.Minute, seconds);
         }
 
         ClockManager.Instance.SetCurrentTime(currentTime);
-        
+
         // Update the InputField with the new time
         clockUIManager.hourInputField.text = currentTime.ToString("HH");
         clockUIManager.minuteInputField.text = currentTime.ToString("mm");
         clockUIManager.secondInputField.text = currentTime.ToString("ss");
+        
+        clockUIManager.hourTimeText.text = currentTime.ToString("HH");
+        clockUIManager.minuteTimeText.text = currentTime.ToString("mm");
+        clockUIManager.secondTimeText.text = currentTime.ToString("ss");
     }
 }

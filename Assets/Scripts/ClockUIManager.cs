@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using DG.Tweening;
 using TMPro;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class ClockUIManager : MonoBehaviour
@@ -9,7 +10,9 @@ public class ClockUIManager : MonoBehaviour
     public Transform hourHandPivot;
     public Transform minuteHandPivot;
     public Transform secondHandPivot;
-    public TMP_Text timeText;
+    public TMP_Text hourTimeText;
+    public TMP_Text minuteTimeText;
+    public TMP_Text secondTimeText;
     
     public TMP_InputField hourInputField;
     public TMP_InputField minuteInputField;
@@ -18,7 +21,8 @@ public class ClockUIManager : MonoBehaviour
     public Button saveButton;
     private bool isEditMode = false;
     
-    public Button add12HoursButton;
+    public Button amButton;
+    public Button pmButton;
 
     private void OnEnable()
     {
@@ -28,7 +32,8 @@ public class ClockUIManager : MonoBehaviour
         editButton.onClick.AddListener(OnEditMode);
         saveButton.onClick.AddListener(OffEditMode);
         
-        add12HoursButton.onClick.AddListener(Add12Hours);
+        amButton.onClick.AddListener(Subtract12Hours);
+        pmButton.onClick.AddListener(Add12Hours);
         
         hourInputField.onEndEdit.AddListener(OnTimeInputEndEdit);
         minuteInputField.onEndEdit.AddListener(OnTimeInputEndEdit);
@@ -42,7 +47,11 @@ public class ClockUIManager : MonoBehaviour
 
     private void UpdateClockUI(DateTime currentTime)
     {
-        timeText.text = currentTime.ToString("HH:mm:ss");
+        if (isEditMode) return; // Don't update the clock hands if in edit mode
+        
+        hourTimeText.text = currentTime.ToString("HH");
+        minuteTimeText.text = currentTime.ToString("mm");
+        secondTimeText.text = currentTime.ToString("ss");
 
         // Calculate the angles
         float hourAngle = (currentTime.Hour % 12) * 30 + currentTime.Minute * 0.5f;
@@ -62,23 +71,40 @@ public class ClockUIManager : MonoBehaviour
         }
     }
     
-    private void Add12Hours()
+    private void ChangeTime(DateTime currentTime, int addHours)
+    {
+        DateTime newTime = currentTime.AddHours(addHours);
+        ClockManager.Instance.SetCurrentTime(newTime);
+        hourInputField.text = ClockManager.Instance.GetCurrentTime().ToString("HH");
+        hourTimeText.text = ClockManager.Instance.GetCurrentTime().ToString("HH");
+    }
+    
+    private void Subtract12Hours()
     {
         DateTime currentTime = ClockManager.Instance.GetCurrentTime();
-        if (currentTime.Hour < 12 || (currentTime.Hour == 12 && currentTime.Minute == 0 && currentTime.Second == 0))
+        if (currentTime.Hour >= 12)
         {
-            DateTime newTime = currentTime.AddHours(12);
-            ClockManager.Instance.SetCurrentTime(newTime);
-            hourInputField.text = ClockManager.Instance.GetCurrentTime().ToString("HH");
+            ChangeTime(currentTime, -12);
         }
     }
     
+    private void Add12Hours()
+    {
+        DateTime currentTime = ClockManager.Instance.GetCurrentTime();
+        if (currentTime.Hour < 12)
+        {
+            ChangeTime(currentTime, 12);
+        }
+    }
+
     private void OnEditMode()
     {
         isEditMode = true;
         hourInputField.interactable = isEditMode;
         minuteInputField.interactable = isEditMode;
         secondInputField.interactable = isEditMode;
+        amButton.interactable = true;
+        pmButton.interactable = true;
     }
     
     private void OffEditMode()
@@ -88,6 +114,8 @@ public class ClockUIManager : MonoBehaviour
         minuteInputField.interactable = isEditMode;
         secondInputField.interactable = isEditMode;
         SetTimeFromInputFields();
+        amButton.interactable = false;
+        pmButton.interactable = false;
     }
     
     private void OnTimeInputEndEdit(string input)
@@ -109,7 +137,8 @@ public class ClockUIManager : MonoBehaviour
             int.TryParse(minuteInputField.text, out int minutes) &&
             int.TryParse(secondInputField.text, out int seconds))
         {
-            DateTime newTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hours, minutes, seconds);
+            DateTime newTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                hours, minutes, seconds);
             ClockManager.Instance.SetCurrentTime(newTime);
         }
         else

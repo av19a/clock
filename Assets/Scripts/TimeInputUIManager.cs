@@ -33,7 +33,8 @@ public class TimeInputUIManager : MonoBehaviour
         {
             try
             {
-                DateTime currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, minute, second);
+                DateTime currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                    hour, minute, second);
                 ClockManager.Instance.SetCurrentTime(currentTime);
             }
             catch (ArgumentOutOfRangeException e)

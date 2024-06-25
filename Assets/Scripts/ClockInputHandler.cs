@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using System;
 
 public class ClockInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler

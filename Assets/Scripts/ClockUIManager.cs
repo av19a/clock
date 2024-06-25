@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using DG.Tweening;
 using TMPro;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class ClockUIManager : MonoBehaviour
